@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.9)
+
+project(masm CXX C)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# cmake configuration
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+include(GenerateExportHeader)
+# ===========================================================
+
+# Output binary to predictable location.
+set(BINARY_OUT_DIR ${CMAKE_BINARY_DIR}/bin)
+set(LIB_OUT_DIR ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BINARY_OUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_OUT_DIR})
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BINARY_OUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${BINARY_OUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LIB_OUT_DIR})
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BINARY_OUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${BINARY_OUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${LIB_OUT_DIR})
+# ===========================================================
+set(PROJECT_ROOT ${CMAKE_SOURCE_DIR})
+set(PROJECT_INCLUDE_PRIVATE ${CMAKE_SOURCE_DIR}/src)
+set(PROJECT_INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(PROJECT_CONFIG_INCLUDE ${CMAKE_BINARY_DIR}/include)
+
+add_subdirectory(thirdparty)
+add_subdirectory(src)

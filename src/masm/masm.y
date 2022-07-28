@@ -50,10 +50,11 @@ directive ::= general_directive.
 directives_list ::= directive.
 directives_list ::= directive directives_list.
 
-general_directive ::= model_directive. // includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
+general_directive ::= model_directive. // includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir |  crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
 general_directive ::= processor_dir.
 general_directive ::= name_dir.
 general_directive ::= seg_order_dir.
+general_directive ::= list_dir.
 
 model_directive ::= MODEL memoption eol.
 model_directive ::= MODEL memoption COMMA model_opt_list eol.
@@ -104,6 +105,24 @@ seg_order_dir ::= ALPHA eol.   {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_A
 seg_order_dir ::= SEQ eol.     {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_SEQ); }
 seg_order_dir ::= DOSSEG eol.  {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_DOS); }
 seg_order_dir ::= PDOSSEG eol. {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_DOS); }
+
+list_dir ::= list_dir_opt eol. {/* Ignored */}
+list_dir_opt ::= LIST.
+list_dir_opt ::= NOLIST.
+list_dir_opt ::= XLIST.
+list_dir_opt ::= LISTALL.
+list_dir_opt ::= LISTIF.
+list_dir_opt ::= LFCOND.
+list_dir_opt ::= NOLISTIF.
+list_dir_opt ::= SFCOND.
+list_dir_opt ::= TFCOND.
+list_dir_opt ::= LISTMACROALL.
+list_dir_opt ::= LALL.
+list_dir_opt ::= NOLISTMACRO.
+list_dir_opt ::= SALL.
+list_dir_opt ::= LISTMACRO.
+list_dir_opt ::= XALL.
+
 
 %code
 {

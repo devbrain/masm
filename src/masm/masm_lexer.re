@@ -11,6 +11,7 @@ struct masm_lexer {
   const char* ptr;
   const char* pos;
   const char* end;
+  int eof;
   int line;
 };
 
@@ -22,6 +23,7 @@ struct masm_lexer* masm_lexer_init(const char* text, size_t len) {
   lexer->pos  = text;
   lexer->end  = text + len;
   lexer->line = 1;
+  lexer->eof = 0;
   return lexer;
 }
 
@@ -31,6 +33,9 @@ void masm_lexer_done(struct masm_lexer* victim) {
   }
 }
 
+int masm_lexer_is_eof(struct masm_lexer* lexer) {
+  return lexer->eof;
+}
 
 
 void masm_lexer_get_token(struct masm_lexer* lexer, struct masm_token* tok) {
@@ -72,7 +77,8 @@ int masm_lexer_scan(struct masm_lexer* lexer) {
   if (lexer->cur >= lexer->end)
   {
     lexer->cur = lexer->end;
-    return MASM_LEXER_END_OF_INPUT;
+    lexer->eof = 1;
+    return MASM_END_OF_INPUT;
   }
   lexer->top = lexer->cur;
 
@@ -86,7 +92,7 @@ int masm_lexer_scan(struct masm_lexer* lexer) {
     D        = [0-9] ;
     L        = [a-zA-Z_] ;
     identifier = L ( L | D )*;
-    any = [\000-\377];
+    any = [^];
     ESC      = [\\] ;
     SQ       = ['] ;
     DQ       = ["] ;
@@ -120,11 +126,12 @@ int masm_lexer_scan(struct masm_lexer* lexer) {
   if (lexer->cur >= lexer->end)
   {
     lexer->cur = lexer->end;
-    return MASM_LEXER_END_OF_INPUT;
+    return MASM_END_OF_INPUT;
   }
   /*!re2c
-    "\n"          { lexer->line++; return MASM_COMMENT; }
+    "\n"          { lexer->line++; goto regular; }
     any           { goto comment; }
   */
-  return MASM_LEXER_END_OF_INPUT;
+  lexer->eof = 1;
+  return MASM_END_OF_INPUT;
 }

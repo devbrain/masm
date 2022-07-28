@@ -52,6 +52,12 @@ typedef enum {
   COPROC_TYPE_NO87,
 } coprocessor_type_t;
 
+typedef enum {
+  SEGMENT_ORDER_ALPHA,
+  SEGMENT_ORDER_SEQ,
+  SEGMENT_ORDER_DOS
+} segments_order_t;
+
 #if !defined(MASM_PARSER_IN_LEMON)
 
 #include <memory>
@@ -69,6 +75,7 @@ namespace masm {
     memory_model the_memory_model;
     processor_type_t processor_type;
     coprocessor_type_t coprocessor_type;
+    segments_order_t   segments_order;
   };
 
   MASM_PARSER_EXPORT std::unique_ptr<program> parse(const std::filesystem::path& path, bool debug = false);

@@ -24,7 +24,7 @@ dMASM_FUNC_DECL void masm_ast_set_language(masm_parser_ptr_t ctx, language_type_
 dMASM_FUNC_DECL void masm_ast_set_stack_option(masm_parser_ptr_t ctx, stack_option_t stack_option);
 dMASM_FUNC_DECL void masm_ast_set_processor_type(masm_parser_ptr_t ctx, processor_type_t processor_type);
 dMASM_FUNC_DECL void masm_ast_set_coprocessor_type(masm_parser_ptr_t ctx, coprocessor_type_t coprocessor_type);
-
+dMASM_FUNC_DECL void masm_ast_set_segments_order(masm_parser_ptr_t ctx, segments_order_t segments_order);
 #if !defined(MASM_PARSER_IN_LEMON)
 
 #endif

@@ -59,6 +59,10 @@ void masm_ast_set_coprocessor_type(masm_parser_ptr_t ctx, coprocessor_type_t cop
   ctx->m_ast->coprocessor_type = coprocessor_type;
 }
 
+void masm_ast_set_segments_order(masm_parser_ptr_t ctx, segments_order_t segments_order) {
+  ctx->m_ast->segments_order = segments_order;
+}
+
 namespace masm {
   namespace detail {
     struct auto_parser {
@@ -82,31 +86,26 @@ namespace masm {
       masm_parser_ctx ctx;
       auto_parser p;
       bool eof = false;
-      while (!eof) {
+      while (!masm_lexer_is_eof (lexer_ptr.get())) {
         auto rc = masm_lexer_scan (lexer_ptr.get ());
         if (debug) {
-          const char* tok_s = token_type_to_string (rc);
+          auto tok_s = token_type_to_string (rc);
           std::cout << tok_s << std::endl;
         }
         if (rc == MASM_LEXER_ERROR) {
           throw std::runtime_error ("Lexer error");
         }
         else {
-          if (rc == MASM_LEXER_END_OF_INPUT) {
-            eof = true;
-          } else {
             masm_token tok{};
             masm_lexer_get_token (lexer_ptr.get (), &tok);
             masm_parser (p.parser, rc, &tok, &ctx);
             if (ctx.syntax_error) {
               std::cout << "Syntax error" << std::endl;
             }
-          }
         }
       }
       return std::move(ctx.m_ast);
     }
-
   }
 
   std::unique_ptr<program> parse (const std::filesystem::path& path, bool debug) {

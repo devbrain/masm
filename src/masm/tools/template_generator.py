@@ -50,7 +50,7 @@ def build_test(lst, out_file):
     fd = open(out_file, "w")
     for d in lst:
         name, value = d
-        fd.write(f"REQUIRE({name} == masm::test::scan_one_token (\"{value}\"));\n")
+        fd.write(f"ASSERT_LEXER({name}, \"{value}\");\n")
     fd.close()
 
 

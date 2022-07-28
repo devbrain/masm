@@ -9,7 +9,6 @@
 #include "externc.h"
 
 #define MASM_LEXER_ERROR        -1
-#define MASM_LEXER_END_OF_INPUT -2
 
 struct masm_lexer;
 

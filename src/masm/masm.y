@@ -12,7 +12,7 @@
 %token_prefix MASM_
 
 %syntax_error {
-        masm_parser_context_error (ctx, "Syntax error\n");
+        masm_parser_context_error (ctx, "Syntax error in parser\n");
         /*
         int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
         for (int i = 0; i < n; ++i) {
@@ -44,18 +44,19 @@ program ::= directives_list eol.
 program ::= eol.
 
 eol ::= EOL.
-eol ::= COMMENT EOL.
+eol ::= END_OF_INPUT.
 
 directive ::= general_directive.
 directives_list ::= directive.
 directives_list ::= directive directives_list.
 
-general_directive ::= model_directive. // | segorderdir | includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
+general_directive ::= model_directive. // includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
 general_directive ::= processor_dir.
 general_directive ::= name_dir.
+general_directive ::= seg_order_dir.
 
-model_directive ::= MODEL memoption EOL.
-model_directive ::= MODEL memoption COMMA model_opt_list EOL.
+model_directive ::= MODEL memoption eol.
+model_directive ::= MODEL memoption COMMA model_opt_list eol.
 
 memoption ::= TINY.    {masm_ast_set_memory_model(ctx, MEMORY_MODEL_TINY);}
 memoption ::= SMALL.   {masm_ast_set_memory_model(ctx, MEMORY_MODEL_SMALL);}
@@ -80,8 +81,8 @@ call_type  ::= STDCALL.     {masm_ast_set_call_type(ctx, CALL_TYPE_STDCALL);}
 stack_option ::= NEARSTACK. {masm_ast_set_stack_option(ctx, STACK_OPTION_NEARSTACK);}
 stack_option ::= FARSTACK.  {masm_ast_set_stack_option(ctx, STACK_OPTION_FARSTACK);}
 
-processor_dir ::= processor.
-processor_dir ::= coprocessor.
+processor_dir ::= processor eol.
+processor_dir ::= coprocessor eol.
 
 processor ::= PROC_386.  {masm_ast_set_processor_type (ctx, PROC_TYPE_386); }
 processor ::= PROC_386P. {masm_ast_set_processor_type (ctx, PROC_TYPE_386P); }
@@ -97,7 +98,12 @@ coprocessor ::= COPROC_287.  {masm_ast_set_coprocessor_type (ctx, COPROC_TYPE_28
 coprocessor ::= COPROC_387.  {masm_ast_set_coprocessor_type (ctx, COPROC_TYPE_387); }
 coprocessor ::= COPROC_NO87. {masm_ast_set_coprocessor_type (ctx, COPROC_TYPE_NO87); }
 
-name_dir ::= NAME ID EOL. {/* Ignored */}
+name_dir ::= NAME ID eol. {/* Ignored */}
+
+seg_order_dir ::= ALPHA eol.   {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_ALPHA); }
+seg_order_dir ::= SEQ eol.     {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_SEQ); }
+seg_order_dir ::= DOSSEG eol.  {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_DOS); }
+seg_order_dir ::= PDOSSEG eol. {masm_ast_set_segments_order(ctx, SEGMENT_ORDER_DOS); }
 
 %code
 {

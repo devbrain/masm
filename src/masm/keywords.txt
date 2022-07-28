@@ -1,7 +1,6 @@
 -MASM_EOL: \n
 # -----------------------------------------------
--MASM_COMMENT: ; Comment
--MASM_COMMENT: ; Comment \n
+# Keywords
 # -----------------------------------------------
 MASM_MODEL: .model
 MASM_COMMA: ,
@@ -33,3 +32,7 @@ MASM_COPROC_287: .287
 MASM_COPROC_387: .387
 MASM_COPROC_NO87: .no87
 MASM_NAME: NAME
+MASM_ALPHA: .ALPHA
+MASM_SEQ: .SEQ
+MASM_DOSSEG: DOSSEG
+MASM_PDOSSEG: .DOSSEG

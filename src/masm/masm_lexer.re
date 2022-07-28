@@ -146,7 +146,7 @@ int masm_lexer_scan(struct masm_lexer* lexer) {
       WS { goto std; }
       EOL { lexer->m_lineno++;  return MASM_EOL; }
       ";" { goto comment; }
-      !include "lexer_keywords.inc";
+      !include "lexer_keywords.h";
 
       ANY_CHARACTER { goto any_char; }
 

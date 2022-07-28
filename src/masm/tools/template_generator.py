@@ -3,7 +3,6 @@ import os.path
 import re
 
 
-
 def parse_masm(path):
     lst = []
     for line in open(path).readlines():
@@ -87,12 +86,13 @@ if __name__ == "__main__":
 
     if config["generate_print"]:
         ofile = os.path.join(base_dir, config["generate_print"])
+        #print("*********** " + ofile)
         generate_pretty_print(masm_lst, ofile)
     if config["generate_test"]:
         ofile = os.path.basename(config["generate_test"])
         filename, file_extension = os.path.splitext(ofile)
         tfile = os.path.join(base_dir, "test_" + filename + ".h")
-        lfile = os.path.join(base_dir, "lexer_" + filename + ".inc")
+        lfile = os.path.join(base_dir, "lexer_" + filename + ".h")
         kwfile = os.path.join(base_dir, "lexer_kw_" + filename + ".h")
 
         for_test, for_lexer, for_kw = read_unittest_data(config["generate_test"])

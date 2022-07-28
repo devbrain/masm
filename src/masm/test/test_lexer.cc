@@ -21,7 +21,7 @@ TEST_SUITE("test lexer") {
   }
 
   TEST_CASE("MODEL") {
-    REQUIRE(MASM_PASCAL    == masm::test::scan_one_token ("PASCAL"));
+    REQUIRE(MASM_PASCAL  == masm::test::scan_one_token ("PASCAL"));
     REQUIRE(MASM_MODEL   == masm::test::scan_one_token (".MODEL"));
     REQUIRE(MASM_TINY    == masm::test::scan_one_token ("TINY"));
     REQUIRE(MASM_SMALL   == masm::test::scan_one_token ("SMALL"));
@@ -36,7 +36,7 @@ TEST_SUITE("test lexer") {
 
   TEST_CASE("PROC") {
     REQUIRE(MASM_PROC_386P   == masm::test::scan_one_token (".386p"));
-    REQUIRE(MASM_COPROC_287   == masm::test::scan_one_token (".287"));
+    REQUIRE(MASM_COPROC_287  == masm::test::scan_one_token (".287"));
   }
 
   TEST_CASE("Keywords") {

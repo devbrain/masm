@@ -64,13 +64,9 @@ set(TEST_SOURCES
 
 add_library(masm-parser
         SHARED
-
         ${GENERATED_SOURCES}
-
         masm_lexer.h
         externc.h
-        istream.c
-        istream.h
         ${PROJECT_INCLUDE}/masm/masm-parser.hh
         masm_parser_driver.cc
         masm_parser_iface.h
@@ -83,6 +79,7 @@ add_library(masm-parser
 target_link_libraries(masm-parser
         PRIVATE
         thirdparty::doctest
+        thirdparty::mio
         )
 
 target_include_directories(masm-parser

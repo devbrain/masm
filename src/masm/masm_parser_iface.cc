@@ -4,7 +4,9 @@
 
 #include <stdexcept>
 #include <cstdarg>
+#include <cstring>
 #include <iostream>
+#include <mio/mmap.hpp>
 
 #include "masm_parser_iface.h"
 #include "masm_lexer.h"
@@ -59,20 +61,6 @@ void masm_ast_set_coprocessor_type(masm_parser_ptr_t ctx, coprocessor_type_t cop
 
 namespace masm {
   namespace detail {
-    using istream_ptr_t = std::unique_ptr<istream, decltype (&istream_close)>;
-
-    struct file_closer {
-      FILE* file;
-
-      explicit file_closer (FILE* f)
-          : file (f) {
-      }
-
-      ~file_closer () {
-        fclose (file);
-      }
-    };
-
     struct auto_parser {
       void* parser;
 
@@ -88,12 +76,13 @@ namespace masm {
       }
     };
 
-    std::unique_ptr<program> parse (istream* is, bool debug) {
-      std::unique_ptr<masm_lexer, decltype (&masm_lexer_done)> lexer_ptr (masm_lexer_init (is, 1024), masm_lexer_done);
+    std::unique_ptr<program> parse (const char* txt, std::size_t len, bool debug) {
+      std::unique_ptr<masm_lexer, decltype (&masm_lexer_done)>
+          lexer_ptr (masm_lexer_init (txt, len), masm_lexer_done);
       masm_parser_ctx ctx;
       auto_parser p;
-
-      while (!masm_lexer_is_eof (lexer_ptr.get())) {
+      bool eof = false;
+      while (!eof) {
         auto rc = masm_lexer_scan (lexer_ptr.get ());
         if (debug) {
           const char* tok_s = token_type_to_string (rc);
@@ -103,11 +92,15 @@ namespace masm {
           throw std::runtime_error ("Lexer error");
         }
         else {
-          masm_token tok{};
-          masm_lexer_get_token (lexer_ptr.get (), &tok);
-          masm_parser (p.parser, rc, &tok, &ctx);
-          if (ctx.syntax_error) {
-            std::cout << "Syntax error" << std::endl;
+          if (rc == MASM_LEXER_END_OF_INPUT) {
+            eof = true;
+          } else {
+            masm_token tok{};
+            masm_lexer_get_token (lexer_ptr.get (), &tok);
+            masm_parser (p.parser, rc, &tok, &ctx);
+            if (ctx.syntax_error) {
+              std::cout << "Syntax error" << std::endl;
+            }
           }
         }
       }
@@ -117,18 +110,12 @@ namespace masm {
   }
 
   std::unique_ptr<program> parse (const std::filesystem::path& path, bool debug) {
-    FILE* file = fopen (path.u8string ().c_str (), "rb");
-    if (!file) {
-      throw std::runtime_error (std::string ("Can not open file ") + path.c_str ());
-    }
-    detail::file_closer auto_file (file);
-    detail::istream_ptr_t istream_ptr (istream_create_from_file (file), istream_close);
-    return detail::parse (istream_ptr.get (), debug);
+    mio::mmap_source mmap(path.u8string().c_str());
+    return detail::parse (mmap.data(), mmap.size(), debug);
   }
 
   std::unique_ptr<program> parse (const char* string, bool debug) {
-    detail::istream_ptr_t istream_ptr (istream_create_from_string (string), istream_close);
-    return detail::parse (istream_ptr.get (), debug);
+    return detail::parse (string, strlen(string), debug);
   }
 
 }

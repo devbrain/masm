@@ -62,6 +62,7 @@ typedef enum {
 
 #include <memory>
 #include <filesystem>
+#include <map>
 
 namespace masm {
   struct MASM_PARSER_EXPORT memory_model {
@@ -72,10 +73,16 @@ namespace masm {
   };
 
   struct MASM_PARSER_EXPORT program {
-    memory_model the_memory_model;
-    processor_type_t processor_type;
+    memory_model       the_memory_model;
+    processor_type_t   processor_type;
     coprocessor_type_t coprocessor_type;
     segments_order_t   segments_order;
+    /*
+     * 32-bit MASM only.) Add the specified segments to the group called name.
+     * Syntax
+     * name GROUP segment ⟦, segment ...⟧
+     */
+    std::multimap<std::string, std::string> groups;
   };
 
   MASM_PARSER_EXPORT std::unique_ptr<program> parse(const std::filesystem::path& path, bool debug = false);

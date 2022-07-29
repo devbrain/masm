@@ -53,3 +53,5 @@ MASM_NOLISTMACRO: .NOLISTMACRO
 MASM_SALL: .SALL
 MASM_LISTMACRO: .LISTMACRO
 MASM_XALL: .XALL
+# ------------------------------------------------------
+MASM_GROUP: GROUP

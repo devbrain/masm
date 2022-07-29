@@ -68,7 +68,7 @@ add_library(masm-parser
         masm_lexer.h
         externc.h
         ${PROJECT_INCLUDE}/masm/masm-parser.hh
-        masm_parser_driver.cc
+        masm-parser.cc
         masm_parser_iface.h
         masm_parser_iface.cc
         pretty_print.cc

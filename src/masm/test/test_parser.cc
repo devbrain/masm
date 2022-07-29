@@ -31,4 +31,15 @@ TEST_SUITE("Parser") {
     auto ast = masm::parse (".ALPHA");
     REQUIRE(ast->segments_order == SEGMENT_ORDER_ALPHA);
   }
+
+  TEST_CASE("GROUP") {
+    auto ast = masm::parse ("zopa GROUP pizda, pizda1");
+    auto [s,e] = ast->groups.equal_range ("zopa");
+    REQUIRE(s != e);
+    REQUIRE(s->second == "pizda");
+    s++;
+    REQUIRE(s->second == "pizda1");
+    s++;
+    REQUIRE(s == e);
+  }
 }

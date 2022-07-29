@@ -7,6 +7,7 @@
 }
 
 %token_type {struct masm_token*}
+%token_destructor {masm_lexer_token_destructor ($$);}
 %extra_argument {struct masm_parser_ctx* ctx}
 
 %token_prefix MASM_
@@ -34,6 +35,7 @@
 }
 
 
+
 %name masm_parser
 %start_symbol program
 // -------------------------------------------------------------
@@ -50,11 +52,12 @@ directive ::= general_directive.
 directives_list ::= directive.
 directives_list ::= directive directives_list.
 
-general_directive ::= model_directive. // includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir |  crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
+general_directive ::= model_directive. // includelibdir | commentdir| assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir |  radixdir | titledir | pagedir |  crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir | smartdir
 general_directive ::= processor_dir.
 general_directive ::= name_dir.
 general_directive ::= seg_order_dir.
 general_directive ::= list_dir.
+general_directive ::= group_dir.
 
 model_directive ::= MODEL memoption eol.
 model_directive ::= MODEL memoption COMMA model_opt_list eol.
@@ -123,6 +126,18 @@ list_dir_opt ::= SALL.
 list_dir_opt ::= LISTMACRO.
 list_dir_opt ::= XALL.
 
+%type        seg_id_list {struct ast_string_list*}
+%destructor  seg_id_list {ast_destroy_string_list($$);}
+%type        seg_id      {struct ast_string*}
+%destructor  seg_id      {ast_destroy_string($$);}
+%type        group_id    {struct ast_string*}
+%destructor  group_id    {ast_destroy_string($$);}
+
+group_dir ::= group_id(A) GROUP seg_id_list(B).    {ast_add_group_dir(ctx, A, B);}
+group_id(Y) ::= ID(A).                             {Y = ast_create_string(A);}
+seg_id_list(Y) ::= seg_id(A).                      {Y = ast_string_list_create(A);}
+seg_id_list(Y) ::= seg_id_list(B) COMMA seg_id(A). {Y = ast_string_list_append(B, A); }
+seg_id(Y) ::= ID(A).                               {Y = ast_create_string(A);}
 
 %code
 {
